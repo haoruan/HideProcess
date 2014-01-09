@@ -27,5 +27,16 @@
     <ClCompile Include="basic_mdl_flags.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hookssdt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="hookssdt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kernellib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
