@@ -1,12 +1,7 @@
 #ifndef _HOOKSSDT_H
 #define _HOOKSSDT_H
 
-#define DEBUG_TRACE
-
 #include "kernellib.h"
-#include <ntddk.h>
-#include <windef.h>
-#include <intrin.h>
 
 
 
@@ -24,8 +19,8 @@ typedef struct ServiceDescriptorEntry {
 #define SEARCH_RANGE 0x170
 
 //__declspec(dllimport)  ServiceDescriptorTableEntry_t KeServiceDescriptorTable;
-ServiceDescriptorTableEntry_t KeServiceDescriptorTable;
-#define SYSTEMSERVICE(_function)  (PUCHAR)KeServiceDescriptorTable.ServiceTableBase + (KeServiceDescriptorTable.ServiceTableBase[*(PULONG)((PUCHAR)_function + 21)] >> 4)
+ServiceDescriptorTableEntry_t KeServiceDescriptorTable, KeServiceDescriptorTableShadow;
+#define SYSTEMSERVICE(_function)  (PUCHAR)KeServiceDescriptorTable.ServiceTableBase + ((LONG)KeServiceDescriptorTable.ServiceTableBase[*(PULONG)((PUCHAR)_function + 21)] >> 4)
 
 
 PMDL  g_pmdlSystemCall;
@@ -107,5 +102,8 @@ NTSTATUS NewZwQuerySystemInformation(
 
 KIRQL WPOFFx64();
 void WPONx64(KIRQL irql);
+
+NTSTATUS Hp_Onload(IN PDRIVER_OBJECT theDriverObject, IN PUNICODE_STRING theRegistryPath);
+VOID Hp_OnUnload(IN PDRIVER_OBJECT DriverObject);
 
 #endif

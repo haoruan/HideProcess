@@ -283,11 +283,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="basic_mdl_flags.c" />
+    <ClCompile Include="dkomeprocess.c" />
     <ClCompile Include="hookssdt.c" />
+    <ClCompile Include="idthook.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dkomeprocess.h" />
     <ClInclude Include="hookssdt.h" />
+    <ClInclude Include="idthook.h" />
     <ClInclude Include="kernellib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="sysenter.s" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
