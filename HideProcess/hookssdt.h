@@ -100,9 +100,6 @@ NTSTATUS NewZwQuerySystemInformation(
 	IN ULONG SystemInformationLength,
 	OUT PULONG ReturnLength);
 
-KIRQL WPOFFx64();
-void WPONx64(KIRQL irql);
-
 NTSTATUS Hp_Onload(IN PDRIVER_OBJECT theDriverObject, IN PUNICODE_STRING theRegistryPath);
 VOID Hp_OnUnload(IN PDRIVER_OBJECT DriverObject);
 

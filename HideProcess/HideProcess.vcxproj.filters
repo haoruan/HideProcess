@@ -39,6 +39,12 @@
     <ClCompile Include="idthook.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="detour.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kernellib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hookssdt.h">
@@ -53,9 +59,18 @@
     <ClInclude Include="idthook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="detour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="sysenter.s">
+    <MASM Include="sysenter.asm">
+      <Filter>ASM</Filter>
+    </MASM>
+    <MASM Include="myntdeviceIocontrolfile.asm">
+      <Filter>ASM</Filter>
+    </MASM>
+    <MASM Include="myseaccesscheck.asm">
       <Filter>ASM</Filter>
     </MASM>
   </ItemGroup>

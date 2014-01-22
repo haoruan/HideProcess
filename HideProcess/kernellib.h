@@ -14,4 +14,7 @@
 #define	Ktrace(fmt, ...)
 #endif
 
+KIRQL WPOFFx64();
+void WPONx64(KIRQL irql);
+
 #endif

