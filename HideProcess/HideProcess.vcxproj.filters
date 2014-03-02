@@ -45,6 +45,15 @@
     <ClCompile Include="kernellib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dt_template.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="klog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fu_rootkit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hookssdt.h">
@@ -62,6 +71,18 @@
     <ClInclude Include="detour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dt_template.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="klog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fu_rootkit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ioctlcmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="sysenter.asm">
@@ -71,6 +92,9 @@
       <Filter>ASM</Filter>
     </MASM>
     <MASM Include="myseaccesscheck.asm">
+      <Filter>ASM</Filter>
+    </MASM>
+    <MASM Include="my_detour_template.asm">
       <Filter>ASM</Filter>
     </MASM>
   </ItemGroup>

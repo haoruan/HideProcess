@@ -1,5 +1,5 @@
 .code
-	MySeAccessCheck proc
+	JumpTemplate proc
 
 		push rax
 		push rcx
@@ -10,6 +10,7 @@
 		push r11
 		pushfq
 
+		mov rcx, 12h
 		mov rax, 4321432143214321h
 		call rax
 
@@ -22,16 +23,9 @@
 		pop rcx
 		pop rax
 
-		sub     rsp,68h
-		mov     rax,qword ptr [rsp+0B8h]
-		mov     qword ptr [rsp+50h],rax
-
-		;push rax
-		;mov rax, 1234123412341234h
-
 		push 12341234h
 		mov dword ptr [rsp+4h], 56785678h
 		ret
 
-	MySeAccessCheck endp
+	JumpTemplate endp
 end

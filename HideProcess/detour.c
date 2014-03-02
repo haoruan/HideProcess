@@ -52,7 +52,9 @@ NTSTATUS DT_Onload(IN PDRIVER_OBJECT theDriverObject,
 	/*PUCHAR testfun = (PUCHAR)TestFun;
 	StarAssem();
 	return STATUS_SUCCESS;*/
-	d_reentry_address = (ULONG64)FUNCTION + FUNCTION_OFFSET - 1;
+	d_reentry_address = (ULONG64)FUNCTION + FUNCTION_OFFSET;
+	ULONG low_reentry_address = (ULONG)d_reentry_address;
+	ULONG high_reentry_address = (ULONG)(d_reentry_address >> 32);
 
 	non_paged_memory = (PUCHAR)ExAllocatePoolWithTag(NonPagedPool, POOL_SIZE, "tag1");
 	if (!non_paged_memory) {
@@ -65,26 +67,30 @@ NTSTATUS DT_Onload(IN PDRIVER_OBJECT theDriverObject,
 	}
 
 	int replace = 0;
-	for (int i = 0; i < POOL_SIZE - 8; i++) {
+	for (int i = 0; i < POOL_SIZE - 4; i++) {
 		if (*(PULONG64)(non_paged_memory + i) == 0x4321432143214321) {
 			*(PULONG64)(non_paged_memory + i) = (ULONG64)TestFun;
+			Ktrace("(MYRKT)Detour :Call address has benn replaced.\n");
 			replace++;
 		}
-		if (*(PULONG64)(non_paged_memory + i) == 0x1234123412341234) {
-			*(PULONG64)(non_paged_memory + i) = d_reentry_address;
+		if (*(PULONG)(non_paged_memory + i) == 0x12341234) {
+			*(PULONG)(non_paged_memory + i) = low_reentry_address;
+			*(PULONG)(non_paged_memory + i + 8) = high_reentry_address;
+			Ktrace("(MYRKT)Detour :Jmp address has benn replaced.\n");
 			replace++;
 			break;
 		}
 	}
 
+	//return STATUS_SUCCESS;
+
 	if (replace < 2) {
-		Ktrace("(MYRKT)Detour :Replace address error.\n");
 		return STATUS_UNSUCCESSFUL;
 	}
 	
 	KIRQL irql = WPOFFx64();
 	ULONG64 myfun;
-	UCHAR jmp_code[] = "\x48\xB8\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\xFF\xE0\x90\x90\x90\x90\x58";
+	UCHAR jmp_code[] = "\x48\xB8\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\xFF\xE0\x90\x90\x90\x90\x90";
 	myfun = (ULONG64)non_paged_memory;
 	memcpy(jmp_code + 2, &myfun, 8);
 	memcpy(orig_code, FUNCTION, FUNCTION_OFFSET);
@@ -98,7 +104,7 @@ NTSTATUS DT_Onload(IN PDRIVER_OBJECT theDriverObject,
 
 VOID DT_OnUnload(IN PDRIVER_OBJECT DriverObject)
 {
-	Ktrace("(MYRKT)%s Call Count : %llx\n", FUNCTION_NAME, call_count);
+	Ktrace("(MYRKT)%s Call Count : %d\n", FUNCTION_NAME, call_count);
 	if (check_success){
 		KIRQL irql = WPOFFx64();
 		memcpy(FUNCTION, orig_code, FUNCTION_OFFSET);

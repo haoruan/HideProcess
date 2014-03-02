@@ -285,19 +285,27 @@
     <ClCompile Include="basic_mdl_flags.c" />
     <ClCompile Include="detour.c" />
     <ClCompile Include="dkomeprocess.c" />
+    <ClCompile Include="dt_template.c" />
+    <ClCompile Include="fu_rootkit.c" />
     <ClCompile Include="hookssdt.c" />
     <ClCompile Include="idthook.c" />
     <ClCompile Include="kernellib.c" />
+    <ClCompile Include="klog.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="detour.h" />
     <ClInclude Include="dkomeprocess.h" />
+    <ClInclude Include="dt_template.h" />
+    <ClInclude Include="fu_rootkit.h" />
     <ClInclude Include="hookssdt.h" />
     <ClInclude Include="idthook.h" />
+    <ClInclude Include="ioctlcmd.h" />
     <ClInclude Include="kernellib.h" />
+    <ClInclude Include="klog.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="myseaccesscheck.asm" />
+    <MASM Include="my_detour_template.asm" />
     <MASM Include="sysenter.asm" />
   </ItemGroup>
   <ItemGroup>

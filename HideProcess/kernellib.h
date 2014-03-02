@@ -5,6 +5,7 @@
 #include <ntddk.h>
 #include <windef.h>
 #include <intrin.h>
+#include <ntddkbd.h>
 
 #define DEBUG_TRACE
 
