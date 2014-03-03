@@ -13,7 +13,8 @@
 //#include "detour.h"
 //#include "dt_template.h"
 //#include "klog.h"
-#include "fu_rootkit.h"
+//#include "fu_rootkit.h"
+#include "basic_hardware.h"
 
 VOID OnUnload(IN PDRIVER_OBJECT DriverObject)
 {
@@ -25,7 +26,8 @@ VOID OnUnload(IN PDRIVER_OBJECT DriverObject)
 	//DT_OnUnload(DriverObject);
 	//DTT_OnUnload(DriverObject);
 	//Klog_OnUnload(DriverObject);
-	FU_OnUnload(DriverObject);
+	//FU_OnUnload(DriverObject);
+	BH_OnUnload(DriverObject);
 	return;
 }
 
@@ -45,7 +47,8 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT theDriverObject,
 	//status = DT_Onload(theDriverObject, theRegistryPath);
 	//status = DTT_Onload(theDriverObject, theRegistryPath);
 	//status = Klog_Onload(theDriverObject, theRegistryPath);
-	status = FU_Onload(theDriverObject, theRegistryPath);
+	//status = FU_Onload(theDriverObject, theRegistryPath);
+	status = BH_Onload(theDriverObject, theRegistryPath);
 
 	return status;
 }

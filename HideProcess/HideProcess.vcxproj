@@ -282,6 +282,7 @@
     <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="basic_hardware.c" />
     <ClCompile Include="basic_mdl_flags.c" />
     <ClCompile Include="detour.c" />
     <ClCompile Include="dkomeprocess.c" />
@@ -293,6 +294,7 @@
     <ClCompile Include="klog.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="basic_hardware.h" />
     <ClInclude Include="detour.h" />
     <ClInclude Include="dkomeprocess.h" />
     <ClInclude Include="dt_template.h" />

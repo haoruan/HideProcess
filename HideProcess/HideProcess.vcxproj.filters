@@ -54,6 +54,9 @@
     <ClCompile Include="fu_rootkit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="basic_hardware.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hookssdt.h">
@@ -81,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ioctlcmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_hardware.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
